@@ -12,9 +12,7 @@ public class Coin : MonoBehaviour
 
     private void Start()
     {
-        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-            player = playerObj.transform;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     private void Update()
@@ -27,8 +25,8 @@ public class Coin : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            GameEvents.Instance.CoinCollected();
-
+           
+            GameEvents.onCoinCollected.Invoke();
             Reposition();
         }
     }
@@ -42,11 +40,12 @@ public class Coin : MonoBehaviour
             float y = Random.Range(minPosition.y, maxPosition.y);
             newPosition = new Vector2(x, y);
         }
-        while (player != null && Vector2.Distance(newPosition, player.position) < minDistanceFromPlayer);
+        while (Vector2.Distance(newPosition, player.position) < minDistanceFromPlayer);
 
         transform.position = newPosition;
     }
 }
+
 
 
 

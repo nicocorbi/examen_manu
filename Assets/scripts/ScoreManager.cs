@@ -1,42 +1,39 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
 
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI muerteText;
+
     private int score = 0;
-    private bool isSubscribed = false;
     private GameObject player;
+    private bool isPlayerDead = false;
 
     void Awake()
     {
         Instance = this;
         UpdateScoreText();
+        muerteText.gameObject.SetActive(false);
     }
 
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player");
+        GameEvents.onCoinCollected.AddListener(OnCoinCollected);
+        GameEvents.onPlayerHitEnemy.AddListener(OnPlayerHitEnemy);
+        GameEvents.onRestart.AddListener(RestartScene);
     }
 
     void Update()
     {
-        if (!isSubscribed && GameEvents.Instance != null)
+        
+        if (isPlayerDead && Input.GetKeyDown(KeyCode.E))
         {
-            GameEvents.Instance.OnCoinCollected += OnCoinCollected;
-            GameEvents.Instance.OnPlayerHitEnemy += OnPlayerHitEnemy;
-            isSubscribed = true;
-        }
-    }
-
-    void OnDestroy()
-    {
-        if (isSubscribed && GameEvents.Instance != null)
-        {
-            GameEvents.Instance.OnCoinCollected -= OnCoinCollected;
-            GameEvents.Instance.OnPlayerHitEnemy -= OnPlayerHitEnemy;
+            GameEvents.onRestart.Invoke();
         }
     }
 
@@ -52,19 +49,28 @@ public class ScoreManager : MonoBehaviour
         if (score < 0) score = 0;
         UpdateScoreText();
 
-        if (score == 0 && player != null)
+        if (score == 0)
         {
+            isPlayerDead = true;
             Destroy(player);
+            muerteText.gameObject.SetActive(true);
         }
+    }
+
+    private void RestartScene()
+    {
+        SceneManager.LoadScene("SampleScene");
     }
 
     private void UpdateScoreText()
     {
-        if (scoreText != null)
-            scoreText.text = " " + score;
+        scoreText.text = " " + score;
         print(score);
     }
 }
+
+
+
 
 
 

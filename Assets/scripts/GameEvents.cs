@@ -1,28 +1,15 @@
 using UnityEngine;
-using System;
+using UnityEngine.Events;
 
-public class GameEvents : MonoBehaviour
+public static class GameEvents
 {
-    public static GameEvents Instance;
-
-    public event Action OnCoinCollected;
-    public event Action OnPlayerHitEnemy;
-
-    void Awake()
-    {
-        Instance = this;
-    }
-
-    public void CoinCollected()
-    {
-        OnCoinCollected?.Invoke();
-    }
-
-    public void PlayerHitEnemy()
-    {
-        OnPlayerHitEnemy?.Invoke();
-    }
+    public static UnityEvent onCoinCollected = new UnityEvent();
+    public static UnityEvent onPlayerHitEnemy = new UnityEvent();
+    public static UnityEvent onRestart = new UnityEvent(); 
 }
+
+
+
 
 
 
